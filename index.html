@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corona Attack</title>
     <style>
@@ -182,11 +181,11 @@
                 }
             }
             if (opened == true){
-                myGameArea.game_canvas.width = screen.width;
+                myGameArea.game_canvas.width = screen.availWidth;
                 myGameArea.game_canvas.height = window.innerHeight*0.95;
                 myGamePiece.x = (myGameArea.game_canvas.width/2)-32;
                 myGamePiece.y = myGameArea.game_canvas.height-64;
-                myscore.score = (myGameArea.game_canvas.width/2)-30;
+                myscore.x = (myGameArea.game_canvas.width/2)-30;
                 myscore.update();
                 myGamePiece.update();
             }
