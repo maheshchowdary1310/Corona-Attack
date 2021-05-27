@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corona Attack</title>
+    <style>
+        *{
+            margin: 0%;
+        }
+        #start_div{
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        #start_btn{
+            background-color : rgba(0,0,0,0.8);
+            color:whitesmoke;
+            text-decoration: none;
+            width: auto;
+            height: 60px;
+            padding:5px 20px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 500;
+            border : 2px solid black;
+        }
+        #start_btn:hover{
+            background-color: rgba(225,225,225,0.8);
+            transition-duration: 400ms;
+            color:black;
+        }
+        #game_canvas{
+            position: absolute;
+            left: 50%;
+            -ms-transform: translate(-50%);
+            transform: translate(-50%);
+            z-index: 2;
+            background-color: rgba(255,255,255,0.9);
+        }
+    </style>
+</head>
+<body onload="startAnimation()" onresize="Resize_canvas()">
+    <div id="start_div"> 
+        <button onclick="startGame()" id="start_btn">Start Your Game</button>
+    </div>
+    <script>
+        var dots = [];
+        var lines = [];
+        var speeds = [-1.5,0.5,1.5,-0.5];
+        var i,j;
+        var n_dots=25;
+        var opened = false;
+        if (document.body.clientWidth >= 800){
+            n_dots = 40;
+        }
+        function startAnimation(){
+            AnimateArea.start();
+            for (i=0;i<n_dots;i++){
+                dots[i] = new component(Math.floor(Math.random()*document.body.clientWidth),Math.floor(Math.random()*window.innerHeight));
+                lines[i] = []; 
+            }
+            for (i=0;i<n_dots;i++){
+                for (j=0;j<n_dots;j++){
+                    lines[i][j] = new get_line(dots[i].x,dots[i].y,dots[j].x,dots[j].y);
+                }
+            }
+        }
+
+        var AnimateArea = {
+            canvas : document.createElement("canvas"),
+            start : function(){
+                this.canvas.width = document.body.clientWidth;
+                this.canvas.height = window.innerHeight;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateAnimateArea, 20);
+            },
+            clear : function(){
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        function component(x,y) {
+            this.x = x;
+            this.y = y;
+            this.speedx = speeds[Math.floor(Math.random()*4)];    
+            this.speedy = speeds[Math.floor(Math.random()*4)];    
+            this.update = function(){
+                ctx = AnimateArea.context;
+                ctx.beginPath();
+                ctx.fillStyle = "#000000";
+                ctx.arc(this.x,this.y,2,0,2*Math.PI,false);
+                ctx.fill();
+            }
+        }
+
+        function get_line(x1,y1,x2,y2){
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.color = "#000000";
+            this.update_line = function(){
+                ctx_line = AnimateArea.context;
+                ctx_line.beginPath();
+                ctx_line.strokeStyle = this.color;
+                ctx_line.moveTo(this.x1,this.y1);
+                ctx_line.lineTo(this.x2,this.y2);
+                ctx_line.stroke();
+            }
+        }
+
+        function updateAnimateArea(){
+            AnimateArea.clear();
+            for (i=0;i<n_dots;i++){
+                if (dots[i].x > AnimateArea.canvas.width || dots[i].x < 0){
+                    dots[i].speedx*=-1;
+                }
+                if (dots[i].y > AnimateArea.canvas.height || dots[i].y < 0){
+                    dots[i].speedy*=-1;
+                }
+                dots[i].x+=dots[i].speedx;
+                dots[i].y+=dots[i].speedy;
+                dots[i].update();
+            }
+            for (i=0;i<n_dots;i++){
+                for (j=0;j<n_dots;j++){
+                    if (Math.abs(dots[i].x -dots[j].x) <= 100 &&  Math.abs(dots[i].y -dots[j].y) <= 100){
+                        lines[i][j].x1 = dots[i].x;
+                        lines[i][j].y1 = dots[i].y;
+                        lines[i][j].x2 = dots[j].x;
+                        lines[i][j].y2 = dots[j].y;
+                        lines[i][j].color = "#000000"
+                    }
+                    else if (Math.abs(dots[i].x -dots[j].x) <= 120 &&  Math.abs(dots[i].y -dots[j].y) <= 120){
+                        lines[i][j].x1 = dots[i].x;
+                        lines[i][j].y1 = dots[i].y;
+                        lines[i][j].x2 = dots[j].x;
+                        lines[i][j].y2 = dots[j].y;
+                        lines[i][j].color = "#444444";
+                    }
+                    else if (Math.abs(dots[i].x -dots[j].x) <= 150 &&  Math.abs(dots[i].y -dots[j].y) <= 150){
+                        lines[i][j].x1 = dots[i].x;
+                        lines[i][j].y1 = dots[i].y;
+                        lines[i][j].x2 = dots[j].x;
+                        lines[i][j].y2 = dots[j].y;
+                        lines[i][j].color = "#AAAAAA";
+                    }
+                    else{
+                        lines[i][j].x1 = 0;
+                        lines[i][j].y1 = 0;
+                        lines[i][j].x2 = 0;
+                        lines[i][j].y2 = 0;
+                    }
+                    lines[i][j].update_line();
+                }
+            }
+        }
+
+        function Resize_canvas(){
+            AnimateArea.canvas.width = document.body.clientWidth;
+            AnimateArea.canvas.height = window.innerHeight;
+            if (document.body.clientWidth >= 700){
+                n_dots = 50;
+            }
+            else{
+                n_dots = 25;
+            }
+            for (i=0;i<n_dots;i++){
+                dots[i] = new component(Math.floor(Math.random()*document.body.clientWidth),Math.floor(Math.random()*window.innerHeight));
+                lines[i] = []
+            }
+            for (i=0;i<n_dots;i++){
+                for (j=0;j<n_dots;j++){
+                    lines[i][j] = new get_line(dots[i].x,dots[i].y,dots[j].x,dots[j].y);
+                }
+            }
+            if (opened == true){
+                myGameArea.game_canvas.width = screen.width;
+                myGameArea.game_canvas.height = window.innerHeight*0.95;
+                myGamePiece.x = (myGameArea.game_canvas.width/2)-32;
+                myGamePiece.y = myGameArea.game_canvas.height-64;
+                myscore.score = (myGameArea.game_canvas.width/2)-30;
+                myscore.update();
+                myGamePiece.update();
+            }
+        }
+    </script>   
+    <script src="main.js"></script>
+</body>
+</html>
