@@ -1,7 +1,7 @@
 var myGamePiece;
 var bullet_Piece=[];
 var virus_Piece =[];
-var arr_speeds = [-4,-3,4,3];
+var arr_speeds = [-2,-1,2,1];
 function startGame(){
     myGameArea;
     myGamePiece;
@@ -18,7 +18,7 @@ var myGameArea = {
     game_canvas : document.createElement("canvas"),
     start : function(){
         this.game_canvas.setAttribute('id','game_canvas');
-        this.game_canvas.width = screen.width;
+        this.game_canvas.width = screen.availWidth;
         this.game_canvas.height = window.innerHeight*0.95;
         this.state = false;
         this.frameNo =0;
@@ -124,7 +124,7 @@ function updateGameArea(){
     myGameArea.clear();
     if (myGameArea.x){
         if (myGameArea.x >=16 && myGameArea.x <= myGameArea.game_canvas.width-16){
-            myGamePiece.x = myGameArea.x - 32
+            myGamePiece.x = myGameArea.x - 32;
         }
         myGameArea.frameNo+=1;
         if (myGameArea.frameNo == 1 || everyinterval(3,myGameArea.frameNo)){
@@ -140,7 +140,7 @@ function updateGameArea(){
         bullet_Piece[i].update();
     }
     myGameArea.frameNo_v+=1;
-    if (myGameArea.frameNo_v == 1 || everyinterval(300,myGameArea.frameNo_v) || virus_Piece.length == 0) {
+    if (myGameArea.frameNo_v == 1 || everyinterval(150,myGameArea.frameNo_v) || virus_Piece.length == 0) {
         virus_Piece.push(new get_virus());
     }
     for (i=0;i<virus_Piece.length;i++){
